@@ -37,8 +37,8 @@ while getopts 't:P:h' opt; do
 done
 shift "$(($OPTIND -1))"
 
-if [ ! -n "${ASANA_API_TOKEN}" ]; then
-   echo "ERROR: Asana API token must be set in environment variable ASANA_API_TOKEN" && usage
+if [ ! -n "${ASANA_PAT_TOKEN}" ]; then
+   echo "ERROR: Asana API token must be set in environment variable ASANA_PAT_TOKEN" && usage
 fi
 
 echo -e "Asana task to Jira creator (A2J) v0.01"
@@ -51,7 +51,7 @@ echo -e "Issue type = $issueType\n"
 if [ -n "$parentIssue" ]; then
    echo -e "Parent Issue = $parentIssue\n"
 fi
-#echo "Asana token = ${ASANA_API_TOKEN}"
+#echo "Asana token = ${ASANA_PAT_TOKEN}"
 
 # Get data from Asana
 #####################
@@ -61,7 +61,7 @@ asana_url="https://app.asana.com/api/1.0/tasks/$asanaId?opt_pretty=true&opt_fiel
 #echo $asana_url
 
 # Get asana data -- id, name, description ("notes" in asana API)
-response_cmd=$(curl -w "%{http_code}" -o - -s -H "Authorization: Bearer ${ASANA_API_TOKEN}" -H "Accepts: application/json" $asana_url)
+response_cmd=$(curl -w "%{http_code}" -o - -s -H "Authorization: Bearer ${ASANA_PAT_TOKEN}" -H "Accepts: application/json" $asana_url)
 #echo $response_cmd
 http_status=$(echo $response_cmd | awk -F'}' ' { print $NF } '   )
 #echo "HTTP code: $http_status"

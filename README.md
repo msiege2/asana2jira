@@ -4,7 +4,7 @@ A simple bash script to convert Asana tasks to Jira tickets.  Utilizes [jira-cli
 
 ## Setup
 1) Install [jira-cli](https://github.com/ankitpokhrel/jira-cli) locally.  It will handle the API calls on the Jira side. Jira-cli also sets a default project which is where the a2j script imports to (this can be overriden when calling jira-cli, however I didn't plumb that through to the cli call in my script yet). 
-2) Create a personal access token (PAT) in Asana.  For specific details on how to do this, see the [Asana API instructions](https://asana.com/guide/help/api/api). You must export `ASANA_PAT_TOKEN` from your shell for the script to read.
+2) Create a personal access token (PAT) in Asana.  For specific details on how to do this, see the [Asana API instructions](https://asana.com/guide/help/api/api). When you have your PAT, you must export it from your shell as an environment variable by the name of `ASANA_PAT_TOKEN` for the a2j script to read.
 3) `chmod` the a2j script to allow execution and run it!
 
 ## Usage

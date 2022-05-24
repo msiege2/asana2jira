@@ -12,7 +12,7 @@ A simple bash script to convert Asana tasks to Jira tickets.  Utilizes [jira-cli
 
 * `<asana_id>` is required and is the 16 digit id from the task URL.  To find this ID, open your asana ticket and look at the URL.  The `asana_id` is the LAST id in that URL.  For example, with url:
 ```https://app.asana.com/0/0000000000000000/1111111111111111```
-the `asana_id` is `111111111111111111`.
+the `asana_id` is `1111111111111111`.
 
 * Jira issue type is optional.  It defaults to Task, but you can override with Bug, Story, Epic
 

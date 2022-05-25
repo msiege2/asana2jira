@@ -1,6 +1,6 @@
 #!/bin/bash
 
-usage() { echo "Usage: $(basename $0) <asana_id> [-t issue type] [-P parent issue]" 1>&2; exit 1; }
+usage() { echo "Usage: $(basename $0) <asana_id> [-p projectKey] [-t issue type] [-P parent issue]" 1>&2; exit 1; }
 [ $# -eq 0 ] && usage
 
 n=1
@@ -25,6 +25,11 @@ while getopts 't:P:h' opt; do
   case "$opt" in
 	t)
 	  issueType="${OPTARG}"
+	  issueTypeArg="-t${OPTARG}"
+	  ;;
+	p)
+	  project="${OPTARG}"
+	  projectArg="-p${OPTARG}"
 	  ;;
 	P)
 	  parentIssue=${OPTARG}
@@ -44,6 +49,9 @@ fi
 echo -e "Asana task to Jira creator (A2J) v0.01"
 echo -e "======================================\n"
 echo "Asana issue = $asanaId"
+if [ -n "$project" ]; then
+   echo -e "Jira Project = $project\n"
+fi
 if [ -z "$issueType" ]; then
    issueType="Task"
 fi
@@ -93,5 +101,5 @@ asana_gid_warn="Ticket copied from Asana ticket ID: $asana_gid"
 #printf '%s\n\n%s' "$asana_gid_warn" "$asana_notes" 
 
 echo "Successfully received Asana data.  Creating Jira ticket..."
-printf '%s\n\n%s' "$asana_gid_warn" "$asana_notes" | jira issue create -t$issueType -s"$asana_name" ${parentIssueArg}
+printf '%s\n\n%s' "$asana_gid_warn" "$asana_notes" | jira issue create ${projectArg} ${issueTypeArg} -s"$asana_name" ${parentIssueArg}
 echo -e "Jira ticket created.\n"

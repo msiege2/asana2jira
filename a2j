@@ -46,7 +46,7 @@ if [ ! -n "${ASANA_PAT_TOKEN}" ]; then
    echo "ERROR: Asana API token must be set in environment variable ASANA_PAT_TOKEN" && usage
 fi
 
-echo -e "Asana task to Jira creator (A2J) v0.01"
+echo -e "Asana task to Jira creator (A2J) v0.02"
 echo -e "======================================\n"
 echo "Asana issue = $asanaId"
 if [ -n "$project" ]; then
@@ -54,6 +54,7 @@ if [ -n "$project" ]; then
 fi
 if [ -z "$issueType" ]; then
    issueType="Task"
+   issueTypeArg="-tTask"
 fi
 echo -e "Issue type = $issueType\n"
 if [ -n "$parentIssue" ]; then
@@ -65,7 +66,7 @@ fi
 #####################
 echo "Getting task data from Asana..."
 #set URL
-asana_url="https://app.asana.com/api/1.0/tasks/$asanaId?opt_pretty=true&opt_fields=name,notes"
+asana_url="https://app.asana.com/api/1.0/tasks/$asanaId?opt_pretty=true&opt_fields=name,notes,permalink_url"
 #echo $asana_url
 
 # Get asana data -- id, name, description ("notes" in asana API)
@@ -94,12 +95,17 @@ fi
 asana_gid=$(echo "${asana_data}"| jq -r '.data.gid')
 asana_name=$(echo "${asana_data}"| jq -r '.data.name')
 asana_notes=$(echo "${asana_data}"| jq -r '.data.notes')
+asana_url=$(echo "${asana_data}"| jq -r '.data.permalink_url')
+
 #echo "Gid: $asana_gid"
 #echo "Name: $asana_name"
 #echo -e "Notes: $asana_notes"
-asana_gid_warn="Ticket copied from Asana ticket ID: $asana_gid"
+
+asana_gid_warn="Ticket copied from Asana ticket: $asana_url"
+
 #printf '%s\n\n%s' "$asana_gid_warn" "$asana_notes" 
 
 echo "Successfully received Asana data.  Creating Jira ticket..."
+#echo "jira issue create ${projectArg} ${issueTypeArg} -s"$asana_name" ${parentIssueArg}"
 printf '%s\n\n%s' "$asana_gid_warn" "$asana_notes" | jira issue create ${projectArg} ${issueTypeArg} -s"$asana_name" ${parentIssueArg}
 echo -e "Jira ticket created.\n"

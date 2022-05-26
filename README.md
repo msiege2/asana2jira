@@ -8,13 +8,17 @@ A simple bash script to convert Asana tasks to Jira tickets.  Utilizes [jira-cli
 3) `chmod` the a2j script to allow execution and run it!
 
 ## Usage
-```a2j <asana_id> [-t jira_issue_type] [-P parent issue]```
+```a2j <asana_id> [-p projectKey] [-t jira_issue_type] [-P parent issue]```
 
 * `<asana_id>` is required and is the 16 digit id from the task URL.  To find this ID, open your asana ticket and look at the URL.  The `asana_id` is the LAST id in that URL.  For example, with url:
 ```https://app.asana.com/0/0000000000000000/1111111111111111```
 the `asana_id` is `1111111111111111`.
 
+* projectKey is optional.  It defaults to the "home" project defined in `jira-cli`.  (example: project key PROJ would create a ticket PROJ-123)
+
 * Jira issue type is optional.  It defaults to Task, but you can override with Bug, Story, Epic
 
 * Parent issue is optional.  If provided, the parent issue should be the Jira ID of an epic the new ticket will be created under.
 
+## Other
+The body of the Jira ticket created will contain a link to the original Asana ticket at the start of the ticket body.

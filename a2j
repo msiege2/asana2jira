@@ -66,7 +66,7 @@ fi
 #####################
 echo "Getting task data from Asana..."
 #set URL
-asana_url="https://app.asana.com/api/1.0/tasks/$asanaId?opt_pretty=true&opt_fields=name,notes,permalink_url"
+asana_url="https://app.asana.com/api/1.0/tasks/$asanaId?opt_pretty=true&opt_fields=name,notes,permalink_url,custom_fields"
 #echo $asana_url
 
 # Get asana data -- id, name, description ("notes" in asana API)
@@ -96,16 +96,22 @@ asana_gid=$(echo "${asana_data}"| jq -r '.data.gid')
 asana_name=$(echo "${asana_data}"| jq -r '.data.name')
 asana_notes=$(echo "${asana_data}"| jq -r '.data.notes')
 asana_url=$(echo "${asana_data}"| jq -r '.data.permalink_url')
+zendesk_id=$(echo "${asana_data}"| jq '.data.custom_fields' | jq -r '.[] | select(.name=="ZD ID") | .display_value')
 
 #echo "Gid: $asana_gid"
 #echo "Name: $asana_name"
 #echo -e "Notes: $asana_notes"
+echo -e "Zendesk Id: $zendesk_id"
 
-asana_gid_warn="Ticket copied from Asana ticket: $asana_url"
-
+preamble="Ticket copied from Asana ticket: $asana_url"
+if [ ! -z "$zendesk_id" ]; then
+   zendesk_url="https://hashicorp.zendesk.com/agent/tickets/$zendesk_id"
+   preamble=$(printf '%s\n\n%s' "$preamble" "Zendesk ticket: $zendesk_url")
+fi
 #printf '%s\n\n%s' "$asana_gid_warn" "$asana_notes" 
 
 echo "Successfully received Asana data.  Creating Jira ticket..."
-#echo "jira issue create ${projectArg} ${issueTypeArg} -s"$asana_name" ${parentIssueArg}"
-printf '%s\n\n%s' "$asana_gid_warn" "$asana_notes" | jira issue create ${projectArg} ${issueTypeArg} -s"$asana_name" ${parentIssueArg}
+echo "jira issue create ${projectArg} ${issueTypeArg} -s"$asana_name" ${parentIssueArg}"
+#printf 'Body:\n%s\n\n%s' "$preamble" "$asana_notes"
+printf '%s\n\n%s' "$preamble" "$asana_notes" | jira issue create ${projectArg} ${issueTypeArg} -s"$asana_name" ${parentIssueArg}
 echo -e "Jira ticket created.\n"
